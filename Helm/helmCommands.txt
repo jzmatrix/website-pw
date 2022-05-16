@@ -1,0 +1,2 @@
+clear;helm install minecraft-bedrock-server Helm/
+clear;helm upgrade minecraft-bedrock-server Helm/

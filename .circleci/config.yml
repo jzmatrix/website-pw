@@ -53,15 +53,15 @@ jobs:
             TS=`cat /tmp/timestamp`
             echo $TS
             ##
-            docker build --cache-from=app  -t jzmatrix/code-server:$TS -t jzmatrix/code-server:latest .
+            docker build --cache-from=app  -t ${IMAGE_REPO}/${IMAGE_NAME}:$TS -t ${IMAGE_REPO}/${IMAGE_NAME}:latest .
             ##
             mkdir -p /caches
-            docker save -o /caches/app.tar jzmatrix/code-server:latest
+            docker save -o /caches/app.tar ${IMAGE_REPO}/${IMAGE_NAME}:latest
             ##
-            docker push jzmatrix/code-server:$TS
-            docker push jzmatrix/code-server:latest
+            docker push ${IMAGE_REPO}/${IMAGE_NAME}:$TS
+            docker push ${IMAGE_REPO}/${IMAGE_NAME}:latest
             ##
-            helm upgrade code-server Helm/ --set idePassword="${IDE_PASSWORD}" --set image.tag=$TS
+            helm upgrade ${IMAGE_NAME} Helm/ --set serviceURL="${SERVICE_URL}",serviceName="${SERVICE_NAME}",image.repository="${IMAGE_REPO}",image.name="${IMAGE_NAME}",image.tag=$TS
       - save_cache:
           key: v1-{{ .Branch }}-{{ epoch }}
           paths:

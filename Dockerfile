@@ -37,7 +37,7 @@ ADD config/apache2/status.conf /etc/apache2/mods-available/status.conf
 RUN chmod 644 /etc/apache2/mods-available/status.conf
 ################################################################################
 RUN rm -rf /var/www/html/*
-ADD website /var/www/html
+ADD www /var/www/html
 ################################################################################
 RUN ln -f -s /etc/apache2/conf-available/php7.4-cgi.conf /etc/apache2/conf-enabled/ ; \
     ln -f -s /etc/apache2/mods-available/info.conf /etc/apache2/mods-enabled/ ; \
@@ -53,10 +53,10 @@ RUN ln -f -s /etc/apache2/conf-available/php7.4-cgi.conf /etc/apache2/conf-enabl
 # RUN ./start.sh
 ################################################################################
 # Simple startup script to avoid some issues observed with container restart
-ADD run-httpd.sh /run-httpd.sh
+ADD config/run-httpd.sh /run-httpd.sh
 RUN chmod -v +x /run-httpd.sh
 ################################################################################
-ADD startServices.sh /opt/startServices.sh
+ADD config/startServices.sh /opt/startServices.sh
 RUN chmod 755 /opt/startServices.sh
 ################################################################################
 CMD [ "/opt/startServices.sh" ]
