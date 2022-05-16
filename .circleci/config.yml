@@ -61,7 +61,7 @@ jobs:
             docker push ${IMAGE_REPO}/${IMAGE_NAME}:$TS
             docker push ${IMAGE_REPO}/${IMAGE_NAME}:latest
             ##
-            helm upgrade ${IMAGE_NAME} Helm/ --set serviceURL="${SERVICE_URL}",serviceName="${SERVICE_NAME}",image.repository="${IMAGE_REPO}",image.name="${IMAGE_NAME}",image.tag=$TS
+            helm upgrade ${IMAGE_NAME} Helm/ --set serviceURL="${SERVICE_URL}",serviceName="${SERVICE_NAME}",namespace="${SERVICE_NAMESPACE}",image.repository="${IMAGE_REPO}",image.name="${IMAGE_NAME}",image.tag=$TS
       - save_cache:
           key: v1-{{ .Branch }}-{{ epoch }}
           paths:
