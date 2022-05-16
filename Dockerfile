@@ -30,6 +30,7 @@ RUN /bin/rm -f /etc/localtime && \
     chmod 644 /etc/apache2/mods-available/info.conf && \
     chmod 644 /etc/apache2/mods-available/status.conf && \
     ln -f -s /etc/apache2/conf-available/php7.4-cgi.conf /etc/apache2/conf-enabled/ && \
+    ln -f -s /etc/apache2/mods-available/cgi.load /etc/apache2/mods-enabled/ && \
     ln -f -s /etc/apache2/mods-available/info.conf /etc/apache2/mods-enabled/ && \
     ln -f -s /etc/apache2/mods-available/info.load /etc/apache2/mods-enabled/  && \
     ln -f -s /etc/apache2/mods-available/remoteip.load /etc/apache2/mods-enabled/ && \
