@@ -34,6 +34,6 @@ RUN /bin/rm -f /etc/localtime && \
     ln -f -s /etc/apache2/mods-available/status.load /etc/apache2/mods-enabled/  && \
     chmod -v +x /run-httpd.sh && \
     chmod 755 /opt/startServices.sh && \
-    chmod -r 755 /var/www/html/*
+    chmod 755 -r /var/www/html/*
 ################################################################################
 CMD [ "/opt/startServices.sh" ]
