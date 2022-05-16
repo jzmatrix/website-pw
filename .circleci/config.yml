@@ -1,0 +1,68 @@
+version: 2.1
+
+workflows:
+  build:
+    jobs:
+      - build:
+          context:
+            - ssdK8S
+            - DockerLogin
+
+jobs:
+  build:
+    working_directory: /app
+    docker:
+      - image: docker:18.06.3-ce-git
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Prepare Environment
+          command: |
+            apk add curl
+            ## 
+            curl -LO https://get.helm.sh/helm-v3.8.2-linux-amd64.tar.gz
+            tar -zxvf helm-v3.8.2-linux-amd64.tar.gz
+            mv linux-amd64/helm /usr/local/bin/helm
+            chmod +x /usr/local/bin/helm
+            ##
+            curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
+            chmod +x ./kubectl
+            mv ./kubectl /usr/local/bin
+            date +%Y%m%d_%H%M > /tmp/timestamp
+            echo $kubeconfig > /tmp/kubeconfig64
+            echo "B64:"
+            which base64
+            ####
+            mkdir ~/.kube
+            ####
+            base64  -d /tmp/kubeconfig64 > ~/.kube/config
+            chmod 400 ~/.kube/config
+      - run:
+          name: Authenticate with Docker
+          command: |
+            docker login --username ${DOCKER_USERNAME} -p "${DOCKER_PASSWORD}"
+      - run:
+          name: Load Docker image layer cache
+          command: |
+            set +o pipefail
+            docker load -i /caches/app.tar | true
+      - run:
+          name: Build application Docker image
+          command: |
+            TS=`cat /tmp/timestamp`
+            echo $TS
+            ##
+            docker build --cache-from=app  -t jzmatrix/code-server:$TS -t jzmatrix/code-server:latest .
+            ##
+            mkdir -p /caches
+            docker save -o /caches/app.tar jzmatrix/code-server:latest
+            ##
+            docker push jzmatrix/code-server:$TS
+            docker push jzmatrix/code-server:latest
+            ##
+            helm upgrade code-server Helm/ --set idePassword="${IDE_PASSWORD}" --set image.tag=$TS
+      - save_cache:
+          key: v1-{{ .Branch }}-{{ epoch }}
+          paths:
+            - /caches/app.tar
