@@ -4,7 +4,7 @@ RUN apt update && \
     apt upgrade && \
     apt -y install openssh-server passwd lsb-release apt-transport-https ca-certificates wget curl && \
     apt update && \
-    apt -y install libcgi-pm-perl apache2 
+    apt -y install libcgi-pm-perl apache2 binutils
 
 ################################################################################
 ADD config/apache2/apache2.conf /etc/apache2/apache2.conf
