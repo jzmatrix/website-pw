@@ -7,6 +7,7 @@ import (
 	"strconv"
 
 	"github.com/gorilla/mux"
+	"github.com/microcosm-cc/bluemonday"
 )
 
 var strLen = 25   // Length of string to generate
@@ -94,6 +95,7 @@ func makeString() string {
 }
 
 func rootHandler(w http.ResponseWriter, r *http.Request) {
+	p := bluemonday.UGCPolicy()
 	//
 	/* Reset variables each run to ensure remnants don't hang around */
 	strLen = 25
@@ -111,7 +113,7 @@ func rootHandler(w http.ResponseWriter, r *http.Request) {
 	pwString := ""
 	//
 	if len(r.URL.Query().Get("mode")) > 0 {
-		mode := r.URL.Query().Get("mode")
+		mode := p.Sanitize(r.URL.Query().Get("mode"))
 		if mode == "alphaonly" {
 			alphaOnlyChecked = "checked"
 			normModeChecked = ""
@@ -128,31 +130,31 @@ func rootHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	//
 	if len(r.URL.Query().Get("alphaonly")) > 0 {
-		alphaOnly, _ = strconv.Atoi(r.URL.Query().Get("alphaonly"))
+		alphaOnly, _ = strconv.Atoi(p.Sanitize(r.URL.Query().Get("alphaonly")))
 		if alphaOnly == 1 {
 			alphaOnlyChecked = "checked"
 		}
 	}
 	if len(r.URL.Query().Get("numonly")) > 0 {
-		numOnly, _ = strconv.Atoi(r.URL.Query().Get("numonly"))
+		numOnly, _ = strconv.Atoi(p.Sanitize(r.URL.Query().Get("numonly")))
 		if numOnly == 1 {
 			numOnlyChecked = "checked"
 		}
 	}
 	if len(r.URL.Query().Get("nosym")) > 0 {
-		noSym, _ = strconv.Atoi(r.URL.Query().Get("nosym"))
+		noSym, _ = strconv.Atoi(p.Sanitize(r.URL.Query().Get("nosym")))
 		if noSym == 1 {
 			noSymChecked = "checked"
 		}
 	}
 	if len(r.URL.Query().Get("qty")) > 0 {
-		strQty, _ = strconv.Atoi(r.URL.Query().Get("qty"))
+		strQty, _ = strconv.Atoi(p.Sanitize(r.URL.Query().Get("qty")))
 	}
 	if len(r.URL.Query().Get("len")) > 0 {
-		strLen, _ = strconv.Atoi(r.URL.Query().Get("len"))
+		strLen, _ = strconv.Atoi(p.Sanitize(r.URL.Query().Get("len")))
 	}
 	if len(r.URL.Query().Get("noform")) > 0 {
-		noForm, _ = strconv.Atoi(r.URL.Query().Get("noform"))
+		noForm, _ = strconv.Atoi(p.Sanitize(r.URL.Query().Get("noform")))
 	}
 
 	for i := 1; i <= strQty; i++ {
