@@ -1,19 +1,21 @@
 apiVersion: apps/v1
-kind: StatefulSet
+kind: Deployment
 metadata:
   namespace: {{ .Values.namespace }}
   name: {{ .Values.serviceName }}
 spec:
-  serviceName: {{ .Values.serviceName | quote }}
   replicas: 1
   selector:
     matchLabels:
       app: {{ .Values.serviceName }}
+  strategy:
+    type: RollingUpdate      
   template:
     metadata:
       labels:
         app: {{ .Values.serviceName }}
     spec:
+      hostNetwork: false
       containers:
       - image: "{{ .Values.image.repository }}/{{ .Values.image.name }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
         name: {{ .Values.serviceName }}
